@@ -5,6 +5,21 @@ from torchvision import models, transforms
 from PIL import Image
 
 app = FastAPI()
+from fastapi.responses import HTMLResponse
+
+@app.get("/")
+def root():
+    return {"status": "ok", "see": ["/health", "/docs", "POST /predict (multipart form-data field 'file')"]}
+
+@app.get("/upload")
+def upload_page():
+    return HTMLResponse("""
+    <form action="/predict" method="post" enctype="multipart/form-data">
+      <input type="file" name="file" accept="image/*"/>
+      <button type="submit">Predict</button>
+    </form>
+    """)
+
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
 with open("classes.json") as f: CLASSES = json.load(f)
